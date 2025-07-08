@@ -4,7 +4,7 @@ import { getFirestore } from "firebase/firestore"; // Import function to get Fir
 
 // Firebase project configuration object—replace with your own config from Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyD8fv6YtWERjBu4ycA9S1QsJEP7LuykgME",          
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY as string,          
   authDomain: "ecommerce-cbc5b.firebaseapp.com",              
   projectId: "ecommerce-cbc5b",                                
   storageBucket: "ecommerce-cbc5b.firebasestorage.app",        
