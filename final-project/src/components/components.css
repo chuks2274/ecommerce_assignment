@@ -1,0 +1,238 @@
+/* === Button Hover Styles (Custom Hover Utility) === */
+
+/* Add smooth transition for background and text color */
+.custom-hover {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Change text to white when hovered */
+.custom-hover:hover {
+  color: white !important;
+}
+
+/* Hover styling for outline-secondary buttons */
+.btn-outline-secondary.custom-hover:hover {
+  background-color: #6c757d;
+  border-color: #6c757d;
+  color: white !important;
+}
+
+/* Hover styling for outline-success buttons */
+.btn-outline-success.custom-hover:hover {
+  background-color: #198754;
+  border-color: #198754;
+  color: white !important;
+}
+
+/* Hover styling for outline-primary buttons */
+.btn-outline-primary.custom-hover:hover {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: white !important;
+}
+
+/* === Product Grid & Card === */
+
+/* Responsive product grid layout */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Flexible columns */
+  gap: 1.5rem;
+}
+
+/* Force 5 columns on large screens (≥992px) */
+@media (min-width: 992px) {
+  .product-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Ensure card wrapper takes full width */
+.product-card-wrapper {
+  width: 100%;
+}
+
+/* Rounded product card */
+.product-card {
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+/* === Rating Stars Component === */
+
+/* Star icons (usually from SVG or icon fonts) */
+.star-icon,
+.star-container svg {
+  color: #ffc107 !important; /* Bootstrap yellow */
+}
+
+/* Numeric rating value */
+.rating {
+  color: gold;
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Additional small text beside rating */
+.rating small {
+  color: #555;
+  margin-left: 0.5rem;
+}
+
+/* === Modal Dialog Component === */
+
+/* Custom modal background */
+.custom-modal-content {
+  background-color: #A3C1AD;
+  border-radius: 8px;
+}
+
+/* === Review & Review Links === */
+
+/* Link for viewing reviews */
+.view-review-link {
+  color: #0d6efd;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+/* Hover state for review link */
+.view-review-link:hover {
+  color: #0a58ca;
+  text-decoration: underline;
+}
+
+/* Review textarea that grows vertically */
+.review-textarea {
+  resize: vertical;
+  min-height: 3rem;
+  max-height: 6rem;
+  overflow-y: auto;
+}
+
+/* === Navbar === */
+
+/* Sticky top navbar with background and layout styling */
+.navbar {
+  background-color: #CAD3C8;
+  padding: 1rem 0;
+  color: #333;
+  font-size: 1.3rem;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1030;
+}
+
+/* Navigation link base style */
+.nav-hover {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+/* On hover, darken nav link */
+.nav-hover:hover {
+  color: #0a58ca;
+}
+
+/* === Notification Components === */
+
+/* Notification link container */
+.notification-link {
+  display: inline-flex !important;
+  align-items: center;
+  position: relative;
+  white-space: nowrap;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Notification bell icon */
+.notification-icon {
+  font-size: 1.1rem;
+  margin-right: 0.3rem;
+  position: relative;
+}
+
+/* Add blue left border and light gray background to light list group items */
+.list-group-item.bg-light {
+  border-left: 5px solid #007bff;
+  background-color: #f8f9fa;
+}
+
+/* Label spacing inside notification */
+.notification-text {
+  margin-right: 0.25rem;
+}
+
+/* Notification badge for unread alerts */
+.navbar .notification-link .notification-badge {
+  font-size: 0.9rem;
+  font-weight: 400;
+  font-family: system-ui, sans-serif;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(50%, -50%);
+  line-height: 1;
+  padding: 2px 5px;
+  min-width: 14px;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Centered bold heading for notification section */
+.notification-heading {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+}
+
+/* Delete button styling for notifications */
+.notif-delete-btn {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  border-color: red;
+  color: red;
+}
+
+/* Make delete button solid red on hover */
+.notif-delete-btn:hover {
+  background-color: red;
+  color: white;
+  border-color: red;
+}
+
+/* Order details table styling */
+ .compact-table {
+  font-size: 0.85rem;
+}
+
+.compact-table td,
+.compact-table th {
+  padding: 0.3rem 0.6rem;
+}
+
+/* Review form styling */
+.form-control{
+  resize: none;
+}
+/* === Footer === */
+
+/* Fixed-width footer with soft styling */
+.footer {
+  width: 100%;
+  padding: 1rem 0;
+  background-color: #CAD3C8;
+  border-top: 1px solid #ddd;
+  text-align: center;
+  color: #333;
+  font-size: 0.9rem;
+  margin: 0;
+  flex-shrink: 0;
+  margin-top: auto;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.05);
+}
+
+ 

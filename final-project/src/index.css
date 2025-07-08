@@ -1,0 +1,60 @@
+/* Reset margins/paddings and apply consistent box-sizing */
+* {
+  margin: 0;                            
+  padding: 0;                           
+  box-sizing: border-box;               
+
+  /* Firefox scrollbar appearance */
+  scrollbar-width: thin;                
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;  
+}
+
+/* WebKit-based scrollbar styles (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;                          
+  height: 6px;                         
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);  
+  border-radius: 3px;                    
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;             
+}
+
+/* Set default font and base colors */
+body {
+  font-family: 'Poppins', sans-serif;   
+  background-color: #fff;               
+  color: #222;                         
+}
+
+
+/* Ensure full viewport coverage and prevent horizontal scroll */
+html,
+body,
+#root {
+  height: 100%;                        
+  background-color: #A3C1AD;          
+  overflow-x: hidden;                 
+}
+
+/* Wrapper around app content */
+.app-wrapper {
+  background-color: #A3C1AD;          
+  min-height: 100vh;                  
+  padding: 1rem;                    
+}
+
+/* Flex layout container to support sticky footer, header, etc. */
+.app-container {
+  display: flex;                     
+  flex-direction: column;         
+  min-height: 100vh;                
+}
+
+
+
+  

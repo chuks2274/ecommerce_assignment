@@ -1,0 +1,83 @@
+/* Table responsiveness for mobile */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: auto; /* IE and Edge */
+  scrollbar-width: thin; /* Firefox */
+}
+
+/* Core table styling */
+.admin-order-table {
+  min-width: 1200px;
+  table-layout: auto;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* Common header and cell alignment */
+.admin-order-table th,
+.admin-order-table td {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Input and select size in table */
+.admin-order-table td input,
+.admin-order-table td select {
+  min-width: 120px;
+}
+
+/* Button spacing */
+.admin-order-table .btn + .btn {
+  margin-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* Specific column widths */
+.admin-order-table th:nth-child(1),  /* Order ID */
+.admin-order-table td:nth-child(1) {
+  max-width: 200px;
+}
+
+.admin-order-table th:nth-child(2),  /* User */
+.admin-order-table td:nth-child(2),
+.admin-order-table td:nth-child(2),
+.admin-order-table th:nth-child(2) {
+  min-width: 250px;
+  max-width: 400px;
+  word-break: break-word;
+}
+
+.admin-order-table th:nth-child(4),  /* Created At */
+.admin-order-table td:nth-child(4),
+.admin-order-table td:nth-child(4),
+.admin-order-table th:nth-child(4) {
+  min-width: 250px;
+  max-width: 400px;
+  word-break: break-word;
+}
+
+.admin-order-table th:nth-child(6),  /* Tracking Number */
+.admin-order-table td:nth-child(6) {
+  max-width: 180px;
+}
+
+.admin-order-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  text-align: center;
+}
+
+.admin-order-container h2 {
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+
+ 

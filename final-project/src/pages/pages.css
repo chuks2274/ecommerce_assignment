@@ -1,0 +1,349 @@
+/* === Base Reset and Layout === */
+
+/* Ensure full-width layout and prevent horizontal scrolling */
+html,
+body {
+  margin: 0;  
+  padding: 0;
+  width: 100%;  
+  overflow-x: hidden;  
+  box-sizing: border-box;  
+}
+
+/* Make body and container elements stretch full width and remove spacing */
+body,
+.container,
+.container-fluid {
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* === Page Titles and Sections === */
+
+/* Style for main page titles */
+.page-title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  font-size: 2rem;
+}
+
+/* Add vertical spacing between large page sections */
+.page-section {
+  margin-bottom: 3rem;
+}
+
+/* === Product Grid & Card === */
+
+/* Create a grid layout with 4 columns for products */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);  
+  gap: 2rem;  
+  padding: 1.5rem;
+  margin: 0;
+  width: 100%;
+}
+
+/* Wrapper for each product card, sets consistent width and spacing */
+.product-card-wrapper {
+  max-width: 250px;
+  flex: 1 1 250px;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+
+/* Style for individual product cards */
+.product-card {
+  background-color: #fff;
+  border-radius: 10px; 
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); 
+  overflow: hidden;
+  display: flex; 
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease; 
+  height: 100%; 
+}
+
+/* Hover effect for product cards (lift and shadow) */
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+/* Style for product image inside the card */
+.product-img {
+  width: 100%;
+  height: 250px;
+  object-fit: contain; 
+  padding: 1rem;
+  background-color: #f8f9fa; 
+}
+
+/* Title text in product cards */
+.product-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Price text styled in blue and bold */
+.product-price {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+/* Product short description style */
+.product-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+  min-height: 60px; 
+}
+
+/* === Cart Section === */
+
+/* Container to hold multiple cart item cards */
+.cart-products-container {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  gap: 1.5rem;
+  margin-left: -0.75rem;
+  margin-right: -0.75rem;
+}
+
+/* Style for individual cart item cards */
+.cart-card {
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Hover effect on cart cards */
+.cart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for images in cart items */
+.cart-img {
+  height: 180px;
+  object-fit: contain;
+  background-color: #f8f9fa;
+  padding: 1rem;
+}
+
+/* Style for quantity control buttons */
+.cart-qty-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 18px;
+  text-align: center;
+  line-height: 1;
+}
+
+/* Displayed number between quantity buttons */
+.cart-qty {
+  padding: 0 8px;
+  min-width: 24px;
+  display: inline-block;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Margin below cart action buttons */
+.cart-actions {
+  margin-bottom: 3rem;
+}
+
+/* Bold styling for cart total texts */
+.cart-total h5,
+.cart-total h4 {
+  font-weight: 700;
+}
+
+/* === Order Section === */
+
+/* Grid layout for displaying 5 order cards in a row */
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+
+/* Wrapper for an order card */
+.order-card {
+  display: flex;
+}
+
+/* Ensure card content fills and stretches properly */
+.order-card .card {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Make the list inside the card stretch vertically */
+.order-card .list-group {
+  flex-grow: 1;
+}
+
+/* Push card footer to the bottom */
+.order-card .card-footer {
+  margin-top: auto;
+}
+
+/* Light background color for order cards */
+.card.order-details {
+  background-color: #f9f9f9 !important;
+}
+
+/* Max-width container to center and space order grid */
+.custom-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* === Buttons === */
+
+/* Styled outline button for product or cart actions */
+button.btn-outline-primary {
+  padding: 0.4rem 1.2rem;
+  font-size: 0.85rem;
+  border-radius: 20px;
+}
+
+/* Small, square-shaped button */
+.btn.btn-sm.square-btn {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Hover effect that matches Bootstrap primary theme */
+.custom-hover:hover {
+  background-color: #0d6efd !important;
+  color: white !important;
+  border-color: #0d6efd !important;
+}
+
+/* Style for pagination buttons */
+.pagination-btn {
+  border: 1px solid #0d6efd;
+  background-color: #0d6efd;
+  color: white;
+  padding: 0.375rem 0.75rem;
+  transition: background-color 0.3s, color 0.3s;
+  box-sizing: border-box;
+  cursor: pointer;
+   border-radius: 5px; 
+  font-size: 0.9rem;
+}
+
+/* Hover state for pagination buttons */
+.pagination-btn:hover:not(:disabled) {
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+/* Disabled pagination buttons appear faded and unclickable */
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Button for cancelling order - starts gray */
+.btn-cancel-order {
+  background-color: #dee2e6;
+  color: #212529;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+/* Cancel order button turns red on hover */
+.btn-cancel-order:hover {
+  background-color: #dc3545;
+  color: #fff;
+}
+
+/* Clear button hover effect */
+.custom-clear-btn:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* === Misc Utility Styles === */
+
+/* Padding for category filter container */
+.category-filter {
+  padding-left: 1rem;
+}
+
+/* Centered confirmation box with spacing and wrapping */
+.confirm-box {
+  gap: 1rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Style for text prepended/attached to input fields */
+.input-group-text {
+  display: flex;
+  align-items: center;
+}
+
+/* Add spacing between button and text inside input group */
+.input-group-text button {
+  margin-left: 8px;
+}
+
+/* === Animations === */
+
+/* Simple spin animation for loaders/spinners */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* Ensure the grid is responsive */
+.order-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive columns */
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+/* Make individual order cards flexible */
+.order-card {
+  width: 100%;
+}
+
+.object-fit-contain {
+  object-fit: contain;
+  max-width: 100%;
+  height: auto;
+}
