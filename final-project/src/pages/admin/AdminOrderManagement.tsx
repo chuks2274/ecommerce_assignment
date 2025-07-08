@@ -165,11 +165,20 @@ export function AdminOrderManagement() {
       message = `📦 Your order ${orderId} is now ${statusLower}.`;
     }
 
-    // Create a new notification in Firestore
+    // Create a new notification in Firestore including all product images and titles
     try {
+      const images = order.items
+        .map(item => item.image)
+        .filter((img): img is string => !!img);
+
+      const productTitles = order.items.map(item => item.title);
+
       await addDoc(collection(db, "notifications"), {
         userId: order.userId,
         message,
+        status,
+        images,        // Array of all product images
+        productTitles, // Array of all product titles
         createdAt: serverTimestamp(),
         read: false,
       });
@@ -197,7 +206,7 @@ export function AdminOrderManagement() {
   }
 
   if (loading) return <p>Loading orders...</p>;
- 
+
   if (error) return <p className="text-danger">{error}</p>;
 
   // Filter orders by selected status

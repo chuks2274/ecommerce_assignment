@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react"; // Import React hooks for state and lifecycle management
-import { useDispatch } from "react-redux"; // Import Redux hooks for dispatching actions
-import { Link, useNavigate } from "react-router-dom"; // Import React Router Link and navigate hook for navigation
-import { type AppDispatch } from "../redux/store"; // Import types for Redux store and dispatch
-import { fetchOrdersByUser } from "../redux/slices/orderSlice"; // Import thunk action to fetch orders by user from Redux slice
-import type { OrderState, Order as OrderType } from "../redux/slices/orderSlice"; // Import types for order state and individual orders
+import { useEffect, useState } from "react"; // Import React hooks for using state and running effects (e.g. when component loads)
+import { useDispatch } from "react-redux"; // Import hook to trigger Redux actions
+import { Link, useNavigate } from "react-router-dom"; // Import React Router tools for linking and navigation
+import { type AppDispatch } from "../redux/store"; // Import type for our custom dispatch from Redux store
+import { fetchOrdersByUser } from "../redux/slices/orderSlice"; // Import Redux action to fetch all orders for a specific user
+import type { OrderState, Order as OrderType } from "../redux/slices/orderSlice"; // Import types for the order slice state and individual Order
 import {
   doc,
   updateDoc,
@@ -13,15 +13,15 @@ import {
   query,
   where,
   getDocs,
-} from "firebase/firestore"; // Import Firestore functions to read and update documents
-import { db } from "../firebase/firebaseConfig"; // Import Firestore database instance
-import "./pages.css"; // Import custom CSS styles for the component
-import { useAppSelector } from "../redux/hooks"; // Import typed selector hook for Redux
+} from "firebase/firestore"; // Import Firebase Firestore functions to read/write data
+import { db } from "../firebase/firebaseConfig";// Import Firebase config
+import "./pages.css"; // CSS styles for this page
+import { useAppSelector } from "../redux/hooks"; // Import custom Redux hook to select data from the store
 
-// Number of orders to show per page for pagination
-const ORDERS_PER_PAGE = 9;
+//Define how many orders to show on each page
+const ORDERS_PER_PAGE = 9; 
 
-// Map order statuses to Bootstrap badge classes for styling
+// Badge styles for different order statuses
 const statusBadgeClasses: Record<string, string> = {
   pending: "bg-warning text-dark",
   processing: "bg-info text-dark",
@@ -31,93 +31,93 @@ const statusBadgeClasses: Record<string, string> = {
   refunded: "bg-secondary",
 };
 
-// Main component for order history page
+// Main component to show user's order history
 export default function OrderHistory() {
-  
+
   // Set up dispatch function to send actions to Redux store
   const dispatch = useDispatch<AppDispatch>();
 
-  // Function to change pages programmatically
+  // Navigate to another page programmatically
   const navigate = useNavigate();
 
-  // Get the current logged-in user from Redux store
+  // Get the currently logged-in user from Redux store
   const user = useAppSelector((state) => state.auth.user);
 
-  // Get orders, loading status, and error from order slice in Redux store 
-  const { orders, loading, error } = useAppSelector(
-    (state) => state.order as OrderState
-  );
+  // Get the order list, loading state, and error from Redux store
+  const { orders, loading, error } = useAppSelector((state) => state.order as OrderState);
 
-  // Local states for pagination page, order status filter, cancel confirmation ID, and cancellation error messages
+  // Local state for pagination, status filter, order cancellation confirmation, and error message display
   const [currentPage, setCurrentPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [confirmCancelId, setConfirmCancelId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Fetch user orders when user ID becomes available or when user/dispatch changes
+  // When component mounts (and whenever user ID changes), fetch that user's orders
   useEffect(() => {
     if (user?.uid) {
       dispatch(fetchOrdersByUser(user.uid));
     }
-  }, [dispatch, user?.uid]); // Run only when dispatch or user ID changes
+  }, [dispatch, user?.uid]); // Run when the dispatch function or user ID changes
 
-  // Filter orders based on selected status or show all if 'all' selected
+  // Apply status filter to the orders list
   const filteredOrders =
     statusFilter === "all"
       ? orders
       : orders.filter((order) => order.status === statusFilter);
 
-  // Calculate total number of pages based on orders per page
+  // Calculate how many pages of orders exist
   const totalPages = Math.ceil(filteredOrders.length / ORDERS_PER_PAGE);
 
-  // Calculate the start index of orders for current page
+  // Get the correct slice of orders for the current page
   const startIndex = (currentPage - 1) * ORDERS_PER_PAGE;
+  const currentOrders = filteredOrders.slice(startIndex, startIndex + ORDERS_PER_PAGE);
 
-  // Slice the filtered orders array to get only the orders for current page
-  const currentOrders = filteredOrders.slice(
-    startIndex,
-    startIndex + ORDERS_PER_PAGE
-  );
-
-  // Async function to cancel an order and notify user and admins
-  async function cancelOrder(orderId: string, userId: string) {
+  // Function to cancel an order
+  async function cancelOrder(order: OrderType) {
     try {
-      // Reference to specific order document in Firestore
+      const { id: orderId, userId, items } = order;
       const orderRef = doc(db, "orders", orderId);
 
-      // Update order status to "cancelled"
+      // Mark the order as "cancelled" in Firestore
       await updateDoc(orderRef, { status: "cancelled" });
 
-      // Reference to notifications collection
+      // Prepare a reference to the notifications collection
       const notificationsRef = collection(db, "notifications");
 
-      // Add notification for the user about cancellation
+      // Extract product images from the order (filter out missing ones)
+      const images = items
+        .map((item) => item.image)
+        .filter((img): img is string => !!img);
+
+      // Add a notification for the user
       await addDoc(notificationsRef, {
         userId,
-        message: `Your order ${orderId} has been cancelled.`,
+        message: `❌ Your order ${orderId} has been cancelled.`,
+        status: "cancelled",
+        images,
         createdAt: serverTimestamp(),
         read: false,
       });
 
-      // Get all admin users for notification
+      // Find all admin users
       const usersRef = collection(db, "users");
       const adminQuery = query(usersRef, where("role", "==", "admin"));
       const adminSnapshot = await getDocs(adminQuery);
 
-      // Create notifications for each admin about the cancellation
-      const adminNotificationsPromises = adminSnapshot.docs.map((adminDoc) =>
+      //  Notify each admin that the order was cancelled
+      const adminNotifPromises = adminSnapshot.docs.map((adminDoc) =>
         addDoc(notificationsRef, {
           userId: adminDoc.id,
-          message: `Order ${orderId} by user ${userId} has been cancelled.`,
+          message: `❌ Order ${orderId} by user ${userId} has been cancelled.`,
+          status: "cancelled",
+          images,
           createdAt: serverTimestamp(),
           read: false,
         })
       );
 
-      // Wait for all admin notifications to be added
-      await Promise.all(adminNotificationsPromises);
+      await Promise.all(adminNotifPromises);
     } catch (error) {
-      // Log error and rethrow so caller knows cancellation failed
       console.error("Failed to cancel order:", error);
       throw error;
     }
@@ -133,15 +133,12 @@ export default function OrderHistory() {
     );
   }
 
-  // Show error message and retry button if loading orders failed
+  // Show error if there was a problem loading orders
   if (error) {
     return (
       <div className="container text-center mt-5">
         <p className="text-danger fw-semibold">⚠️ Failed to load orders: {error}</p>
-        <button
-          className="btn btn-outline-primary mt-2"
-          onClick={() => window.location.reload()}
-        >
+        <button className="btn btn-outline-primary mt-2" onClick={() => window.location.reload()}>
           Retry
         </button>
       </div>
@@ -150,11 +147,11 @@ export default function OrderHistory() {
 
   return (
     <div className="container-fluid mt-5 mb-5 pb-5 custom-container">
-      {/* Header section with title and filter */}
+      {/* Heading and filter dropdown */}
       <div className="mb-4 position-relative">
         <h2 className="text-center mb-4">🧾 Your Order History</h2>
 
-        {/* Filter dropdown and clear filter button */}
+        {/* Filter orders by status */}
         <div className="px-3 px-md-0 d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2">
           <label htmlFor="statusFilter" className="form-label fw-semibold mb-0">
             Filter by Status:
@@ -169,7 +166,6 @@ export default function OrderHistory() {
               setStatusFilter(e.target.value);
             }}
           >
-            {/* Options for filtering orders by status */}
             <option value="all">All</option>
             <option value="pending">Pending</option>
             <option value="in process">In Process</option>
@@ -178,10 +174,10 @@ export default function OrderHistory() {
             <option value="delivered">Delivered</option>
           </select>
 
-          {/* Show clear filter button only if a filter is active */}
+          {/* Button to reset the filter */}
           {statusFilter !== "all" && (
             <button
-              className="btn btn-sm btn-outline-danger mt-2 mt-md-0 "
+              className="btn btn-sm btn-outline-danger mt-2 mt-md-0"
               onClick={() => {
                 setStatusFilter("all");
                 setCurrentPage(1);
@@ -193,27 +189,21 @@ export default function OrderHistory() {
         </div>
       </div>
 
-      {/* Show message if no orders match the filter */}
+      {/* If no orders match the filter, show a message */}
       {filteredOrders.length === 0 ? (
         <p>No orders match the selected filter.</p>
       ) : (
-        // Display list of orders for current page
+        // Render orders in a grid
         <div className="order-grid">
           {currentOrders.map((order: OrderType) => {
-            // Format order date as a readable string
             const orderDate = new Date(order.createdAt).toLocaleString();
-
-            // Determine badge class based on order status
-            const badgeClass =
-              statusBadgeClasses[order.status.toLowerCase()] || "bg-secondary";
-
-            // Normalize order status string
+            const badgeClass = statusBadgeClasses[order.status.toLowerCase()] || "bg-secondary";
             const status = order.status.toLowerCase();
 
             return (
               <div key={order.id} className="order-card">
                 <div className="card shadow-sm h-100 order-details">
-                  {/* Order summary in header */}
+                  {/* Order info header */}
                   <div className="card-header bg-light">
                     <strong>Order ID:</strong> {order.id} <br />
                     <strong>Status:</strong>{" "}
@@ -225,14 +215,13 @@ export default function OrderHistory() {
                     <strong>Total:</strong> ${order.total.toFixed(2)}
                   </div>
 
-                  {/* List of items in the order */}
+                  {/* Show each product in the order */}
                   <ul className="list-group list-group-flush">
                     {order.items.map((item, index) => (
                       <li
-                        key={`${item.id ?? index}-${order.id}`} // fallback to index if item.id is undefined
+                        key={`${item.id ?? index}-${order.id}`}
                         className="list-group-item d-flex justify-content-between align-items-center"
                       >
-                        {/* Product image */}
                         <img
                           src={item.image}
                           alt={item.title}
@@ -240,7 +229,6 @@ export default function OrderHistory() {
                           height="50"
                           className="object-fit-contain me-2"
                         />
-                        {/* Product title and price info */}
                         <div className="flex-grow-1">
                           <div className="fw-semibold">{item.title}</div>
                           <small className="text-muted">
@@ -251,7 +239,7 @@ export default function OrderHistory() {
                     ))}
                   </ul>
 
-                  {/* Footer with order details link and cancel button */}
+                  {/* Buttons for order details and cancel */}
                   <div className="card-footer text-end bg-white">
                     <Link
                       to={`/orders/${order.id}`}
@@ -260,10 +248,9 @@ export default function OrderHistory() {
                       Details
                     </Link>
 
-                    {/* Show cancel button only if order is pending or in process */}
+                    {/* Show cancel button for certain statuses */}
                     {(status === "pending" || status === "in process") && (
                       <>
-                        {/* If user clicked cancel, show confirmation buttons */}
                         {confirmCancelId === order.id ? (
                           <>
                             <span className="me-2">Confirm cancel?</span>
@@ -272,20 +259,12 @@ export default function OrderHistory() {
                               onClick={async () => {
                                 if (!user?.uid) return;
                                 try {
-                                  // Attempt to cancel the order
-                                  await cancelOrder(order.id, user.uid);
-
-                                  // Refresh orders after cancellation
-                                  await dispatch(fetchOrdersByUser(user.uid));
-
-                                  // Reset confirmation and error states
+                                  await cancelOrder(order);  
+                                  await dispatch(fetchOrdersByUser(user.uid));  
                                   setConfirmCancelId(null);
                                   setErrorMessage(null);
                                 } catch {
-                                  // Show error message if cancellation fails
-                                  setErrorMessage(
-                                    "❌ Failed to cancel the order. Please try again."
-                                  );
+                                  setErrorMessage("❌ Failed to cancel the order. Please try again.");
                                 }
                               }}
                             >
@@ -294,23 +273,18 @@ export default function OrderHistory() {
                             <button
                               className="btn btn-sm btn-secondary"
                               onClick={() => {
-                                // Cancel confirmation prompt
                                 setConfirmCancelId(null);
                                 setErrorMessage(null);
                               }}
                             >
                               No
                             </button>
-
-                            {/* Show error message related to cancellation */}
+                            {/* Show error if cancel fails */}
                             {errorMessage && confirmCancelId === order.id && (
-                              <div className="text-danger mt-2 small">
-                                {errorMessage}
-                              </div>
+                              <div className="text-danger mt-2 small">{errorMessage}</div>
                             )}
                           </>
                         ) : (
-                          // Initial cancel button before confirmation
                           <button
                             className="btn btn-sm btn-outline-secondary cancel-order-btn"
                             onClick={() => setConfirmCancelId(order.id)}
@@ -328,7 +302,7 @@ export default function OrderHistory() {
         </div>
       )}
 
-      {/* Pagination buttons if more orders than fit on one page */}
+      {/* Pagination controls */}
       {filteredOrders.length > ORDERS_PER_PAGE && (
         <div className="d-flex justify-content-center align-items-center gap-3 my-4">
           <button
@@ -353,7 +327,7 @@ export default function OrderHistory() {
         </div>
       )}
 
-      {/* Button to go back to the home page */}
+      {/* Back to home button */}
       <div className="text-center mt-5">
         <button className="btn btn-primary" onClick={() => navigate("/")}>
           Back to Home
